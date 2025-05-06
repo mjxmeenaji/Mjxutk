@@ -31,7 +31,7 @@ def convert_m3u8_to_mp4(m3u8_url, output_path):
         .run(overwrite_output=True)
     )
 
-async def handle_txt(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
     document: Document = update.message.document
     if not document.file_name.endswith('.txt'):
         await update.message.reply_text("Sirf .txt file bhejiye jisme Utkarsh links ho.")
@@ -66,6 +66,7 @@ async def handle_txt(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == '__main__':
     app = ApplicationBuilder().token(TOKEN).build()
-    app.add_handler(MessageHandler(filters.Document.FILE_EXTENSION("txt"), handle_txt))
+    app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
     print("Bot is running...")
     app.run_polling()
+    
