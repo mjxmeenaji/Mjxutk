@@ -53,7 +53,7 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Main function to set up the bot
 def main():
     # Replace with your actual bot token
-    bot_token = "YOUR_BOT_TOKEN"
+    bot_token = "7928417328:AAHoB1UJmmPXZ4lRZ7CfEcuw7-5EGuQlf3M"
 
     # Build the bot application
     app = ApplicationBuilder().token(bot_token).build()
