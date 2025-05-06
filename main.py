@@ -12,7 +12,8 @@ from pyrogram import Client
 TOKEN = os.environ.get("BOT_TOKEN")
 
 # Replace with your api_id and api_hash from my.telegram.org
-API_ID = '23069582'  
+API_ID = '23069582' 
+BOT_TOKEN = '7928417328:AAHoB1UJmmPXZ4lRZ7CfEcuw7-5EGuQlf3M'
 API_HASH = 'b3b56eaf67828684f54d540f684fdf1f'
 
 proxies = {
