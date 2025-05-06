@@ -56,7 +56,10 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     file_path = f"/tmp/{document.file_name}"
-    await document.get_file().download_to_drive(file_path)
+
+    # Await the coroutine correctly
+    file = await document.get_file()  # Await the coroutine
+    await file.download_to_drive(file_path)  # Download to drive
 
     with open(file_path, 'r') as f:
         links = [line.strip() for line in f if line.strip()]
