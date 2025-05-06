@@ -1,17 +1,13 @@
 import logging
 import os
+import threading
 import requests
 import ffmpeg
+from flask import Flask
 from telegram import Update, Document
-from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
-from telegram.ext import CommandHandler
+from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters, ContextTypes
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Welcome! Please send a .txt file containing Utkarsh links.")
-
-# Add this in the main section
-app.add_handler(CommandHandler("start", start))
-
+# Telegram token from environment
 TOKEN = os.environ.get("BOT_TOKEN")
 
 proxies = {
@@ -21,6 +17,16 @@ proxies = {
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Dummy HTTP server to keep Koyeb instance alive
+app_flask = Flask(__name__)
+
+@app_flask.route("/")
+def health():
+    return "Bot is alive!"
+
+def run_web():
+    app_flask.run(host="0.0.0.0", port=8000)
 
 def download_file(url, filename):
     headers = {'User-Agent': 'Mozilla/5.0'}
@@ -36,6 +42,11 @@ def convert_m3u8_to_mp4(m3u8_url, output_path):
         .input(m3u8_url, protocol_whitelist="file,http,https,tcp,tls", user_agent="Mozilla/5.0")
         .output(output_path, vcodec="copy", acodec="copy")
         .run(overwrite_output=True)
+    )
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Welcome! Please send a .txt file containing Utkarsh links to start downloading."
     )
 
 async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -72,7 +83,12 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("All files downloaded and sent.")
 
 if __name__ == '__main__':
+    # Start dummy web server in a separate thread
+    threading.Thread(target=run_web).start()
+
+    # Start Telegram bot
     app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
     print("Bot is running...")
     app.run_polling()
