@@ -4,6 +4,13 @@ import requests
 import ffmpeg
 from telegram import Update, Document
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
+from telegram.ext import CommandHandler
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Welcome! Please send a .txt file containing Utkarsh links.")
+
+# Add this in the main section
+app.add_handler(CommandHandler("start", start))
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
